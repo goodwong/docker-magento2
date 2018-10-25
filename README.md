@@ -16,6 +16,7 @@
     ```shell
     # 项目文件夹
     mkdir magento-domain-2/ && cd magento-domain-2/
+    mkdir magento2/ # <------ 此magento2文件夹名对应.env文件的`APPLICATION`值
     ```
 
 3. 克隆
@@ -59,7 +60,7 @@
 
 1. 解压magento代码
     ```shell
-    cd magento-domain-2/
+    cd magento-domain-2/magento2/
     # 下载Magento CE文件包
     # 解压包
     # tar -xzvf Magento-CE-2.2.6-2018-09-07-02-17-04.tar.bz2
@@ -69,20 +70,35 @@
 2. 文件夹结构
     ```
     magento-domain-2/
-    ├── .docker-compose/ # <---- docker-compose 运行及数据文件夹
-    │   ├── adminer
-    │   ├── db
-    │   ├── docker-compose.yml
-    │   ├── .env
-    │   ├── .env.example
-    │   ├── .git
-    │   ├── .gitignore
-    │   ├── nginx
-    │   ├── php-fpm
-    │   └── README.md
-    └── pub/ # <---------------- magento 2.x 代码文件夹
-        ...
+    ├── .docker-compose/ # <---- docker-compose 配置及数据文件夹
+    │   ├── .env
+    │   ├── README.md
+    │   ├── adminer/
+    │   ├── cron/
+    │   ├── db/ # <------------- mysql 数据库文件
+    │   ├── docker-compose.yml
+    |   ....
+    │   ├── nginx/
+    │   ├── php-fpm/
+    │   └── workspace/
+    └── magento2/ # <----------- magento 2.x 代码文件夹
+        ├── CHANGELOG.md
+        ├── COPYING.txt
+        ├── Gruntfile.js.sample
+        ├── LICENSE.txt
+        ├── LICENSE_AFL.txt
+        ├── app/
+        ├── auth.json.sample
+        ├── bin/
+        ....
+        ├── var/
+        └── vendor/
     ```
+
+
+
+
+
 
 3. 设置文件权限
     ```shell
@@ -125,7 +141,7 @@
 
 
 ### 使用现有的 Magento站点代码
-1. 解压代码至 `magento-domain-2/`文件夹
+1. 解压代码至 `magento-domain-2/magento2/`文件夹
     > 文件结构（参见前文）
 
 2. 设置文件权限
@@ -152,7 +168,7 @@
 
 
 - 方法二，进入mysql容器，使用命令行界面  
-    首先将数据文件解压并放在`项目文件夹`下
+    首先将数据文件解压并放在`项目文件夹`下（如:magento-domain-2/magento2/）
     ```shell
     cd .docker-compose/
     docker-compose exec db bash

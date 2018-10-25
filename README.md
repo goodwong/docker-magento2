@@ -96,17 +96,14 @@
     ```
 
 
-
-
-
-
 3. 设置文件权限
     ```shell
     # 需要提前 docker-compose up -d web
+    # 登陆php-fpm容器
     docker-compose exec php-fpm bash
-    find var vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
-    find var vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} +
-    chown -R :www-data .
+    #find var vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
+    #find var vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} +
+    chown -R www-data:www-data .
     chmod u+x bin/magento
     exit
     ```
@@ -121,10 +118,9 @@
 
 5. （或者）命令行安装
     ```shell
-    # 登陆容器
-    docker-compose exec -u www-data php-fpm bash
-    #                         ^
-    #       注意，必须以www-data用户身份执行命令
+    # 登陆workspace容器
+    docker-compose up -d workspace
+    docker-compose exec workspace bash
 
     # 执行安装
     ./bin/magento setup:install \
@@ -170,8 +166,10 @@
 - 方法二，进入mysql容器，使用命令行界面  
     首先将数据文件解压并放在`项目文件夹`下（如:magento-domain-2/magento2/）
     ```shell
+    # 登陆db容器
     cd .docker-compose/
     docker-compose exec db bash
+
     cd /var/www/html/
     mysql -p db_name < database_backup_file.sql
     #           ^                ^
@@ -185,6 +183,18 @@
 ```shell
 cd .docker-compose/
 docker-compose up -d cron
+```
+
+## magento 命令行工具
+```shell
+cd .docker-compose/
+docker-compose up -d workspace
+
+# 登陆workspace容器
+docker-compose exec workspace bash
+# 进入容器后，即可以执行magento命令：
+# 如：magento magento cache:status
+# 同时也支持composer工具
 ```
 
 ## 多站点多项目

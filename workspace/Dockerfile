@@ -12,6 +12,9 @@ RUN if [ ${CHANGE_SOURCE} = 'CN' ]; then \
     composer config -g repo.packagist composer https://packagist.phpcomposer.com \
 ;fi
 
+# 将magento加入命令列表
+RUN export PATH=$PATH:/var/www/html/bin
+
 USER www-data
 
 ENTRYPOINT []

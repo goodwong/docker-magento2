@@ -1,0 +1,75 @@
+version: '3'
+
+services:
+
+  # 数据库管理
+  adminer:
+    image: adminer
+    volumes:
+      - ./adminer/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+    ports:
+      - ${DB_ADMINER_PORT}:8080
+
+  # php-fpm
+  php-fpm:
+    build: ./php-fpm
+    image: docker-magento2-php-fpm
+    depends_on:
+      - db
+      #- redis
+    volumes:
+      - ${APPLICATION}:/var/www/html:cached
+    environment:
+      - CHANGE_SOURCE=${CHANGE_SOURCE}
+
+  # cron
+  cron:
+    build: ./cron
+    depends_on:
+      - php-fpm
+    restart: ${CONTAINER_RESTART}
+    volumes:
+      - ${APPLICATION}:/var/www/html:cached
+    tty: true
+
+  # php-composer，安装组键、发布到服务器等操作
+  workspace:
+    build: ./workspace
+    depends_on:
+      - php-fpm
+    environment:
+      - CHANGE_SOURCE=${CHANGE_SOURCE}
+    volumes:
+      - ${APPLICATION}:/var/www/html:cached
+      - ~/.ssh/:/root/.ssh/:cached
+    tty: true
+    
+
+  # nginx
+  web:
+    image: nginx
+    depends_on:
+      - php-fpm
+    volumes:
+      - ${APPLICATION}:/var/www/html:cached
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "${NGINX_HOST_HTTP_PORT}:80"
+
+  # redis
+  #redis:
+  #  #build: ./redis
+  #  image: redis:4
+  #  restart: ${CONTAINER_RESTART}
+
+  db:
+    image: mysql:5.7
+    restart: ${CONTAINER_RESTART}
+    volumes:
+      - ${APPLICATION}:/var/www/html:cached
+      - ${DB_DIR}:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_DATABASE=${DB_NAME}

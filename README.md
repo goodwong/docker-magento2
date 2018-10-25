@@ -22,7 +22,7 @@
 3. 克隆
     ```shell
     cd magento-domain-2/
-    git clone https://github.com/goodwong/docker-magento2 .docker-compose
+    git clone https://github.com/goodwong/docker-magento2.x .docker-compose
     ```
 
 4. 配置 `docker-magento`

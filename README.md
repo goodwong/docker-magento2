@@ -2,8 +2,9 @@
 # docker for magento 2.x
 为 Magento `2.2` 准备的docker环境，可能`2.1`也能用
 
+> 寻找 Magento 1.x 的docker环境？[点这里](https://github.com/goodwong/docker-magento "For Magento 1.x")
 
-## 安装 docker-magento
+## 安装 docker-magento 环境
 
 1. 安装 docker & docker-compose
     参见docker 官方文档  
@@ -50,11 +51,11 @@
 
 
 
-## 安装magento
+## 安装 magento 站点
 
-> 分为全新按照和使用现有magento源码安装
+> 分为 全新安装 和 使用现有magento源码安装 两种情况
 
-### 全新Magento站点
+### 全新 Magento 站点
 
 1. 解压magento代码
     ```shell
@@ -123,7 +124,7 @@
 
 
 
-### 使用现有的magento代码
+### 使用现有的 Magento站点代码
 1. 解压代码至 `magento-domain-2/`文件夹
     > 文件结构（参见前文）
 

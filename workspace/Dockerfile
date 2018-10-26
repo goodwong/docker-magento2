@@ -6,6 +6,11 @@ RUN curl -s -f -L -o /tmp/installer.php https://install.phpcomposer.com/installe
     && composer --ansi --version --no-interaction \
     && rm -rf /tmp/* /tmp/.htaccess
 
+# www-data的home目录权限有问题，所以需要自行创建并添加权限
+RUN mkdir /var/www/.composer/ && chown www-data:www-data /var/www/.composer/
+
+USER www-data
+
 RUN if [ ${CHANGE_SOURCE} = 'CN' ]; then \
     # Change composer to china source \
     echo "change to Chinese composer source"; \
@@ -13,9 +18,7 @@ RUN if [ ${CHANGE_SOURCE} = 'CN' ]; then \
 ;fi
 
 # 将magento加入命令列表
-RUN export PATH=$PATH:/var/www/html/bin
-
-USER www-data
+ENV PATH=$PATH:/var/www/html/bin
 
 ENTRYPOINT []
 

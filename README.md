@@ -192,9 +192,10 @@ docker-compose up -d workspace
 
 # 登陆workspace容器
 docker-compose exec workspace bash
-# 进入容器后，即可以执行magento命令：
-# 如：magento magento cache:status
-# 同时也支持composer工具
+# 执行magento命令：
+magento cache:status
+# 执行composer命令
+composer list
 ```
 
 ## 多站点多项目

@@ -9,6 +9,10 @@ RUN curl -s -f -L -o /tmp/installer.php https://install.phpcomposer.com/installe
 # www-data的home目录权限有问题，所以需要自行创建并添加权限
 RUN mkdir /var/www/.composer/ && chown www-data:www-data /var/www/.composer/
 
+# php 内存
+RUN cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini \
+    && echo "memory_limit = 1024M" >> $PHP_INI_DIR/conf.d/memory_limit.ini
+
 USER www-data
 
 RUN if [ ${CHANGE_SOURCE} = 'CN' ]; then \

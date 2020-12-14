@@ -1,6 +1,6 @@
 
 # docker for magento 2.x
-为 Magento `2.2` 准备的docker环境，可能`2.1`也能用
+为 Magento `2.4` 准备的docker环境，可能`2.3`也能用
 
 > 寻找 Magento 1.x 的docker环境？[点这里](https://github.com/goodwong/docker-magento "For Magento 1.x")
 
@@ -17,6 +17,7 @@
     # 项目文件夹
     mkdir magento-domain-2/ && cd magento-domain-2/
     mkdir magento2/ # <------ 此magento2文件夹名对应.env文件的`APPLICATION`值
+    mkdir mysql57/ # <------ 此magento2文件夹名对应.env文件的`DB_DIR`值
     ```
 
 3. 克隆
@@ -75,12 +76,13 @@
     │   ├── README.md
     │   ├── adminer/
     │   ├── cron/
-    │   ├── db/ # <------------- mysql 数据库文件
     │   ├── docker-compose.yml
     |   ....
     │   ├── nginx/
     │   ├── php-fpm/
     │   └── workspace/
+    ├── mysql57/ # <------------- mysql 数据库文件
+    |   ....
     └── magento2/ # <----------- magento 2.x 代码文件夹
         ├── CHANGELOG.md
         ├── COPYING.txt
@@ -108,15 +110,7 @@
     exit
     ```
 
-4. 浏览器安装
-    然后在浏览器里访问 `http://你的服务器ip或域名:nginx端口号/setup`
-    安装过程中，配置数据库： 
-    > 数据库地址：`db`  
-    > 数据库用户名：见.env文件`<DB_USER>`  
-    > 数据库密码：见.env文件 `<DB_PASSWORD>`  
-    > 数据库名称：见.env文件 `<DB_NAME>`
-
-5. （或者）命令行安装
+4. 命令行安装
     ```shell
     # 登陆workspace容器
     docker-compose up -d workspace

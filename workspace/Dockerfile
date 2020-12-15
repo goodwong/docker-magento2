@@ -12,6 +12,9 @@ RUN curl -s -f -L -o /tmp/installer.php https://getcomposer.org/installer \
 #     && apt-get install -y mariadb-client \ 
 #     && apt-get clean -y && rm -rf /var/lib/apt/lists/*
 
+# for composer install
+RUN docker-php-ext-install sockets
+
 # 安装 git开发工具
 RUN apt-get update && apt-get install -y git
 

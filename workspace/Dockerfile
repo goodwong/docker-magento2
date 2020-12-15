@@ -74,4 +74,4 @@ RUN service ssh start
 EXPOSE 22
 
 ENTRYPOINT []
-CMD ["/usr/sbin/sshd","-D"]
+CMD ["/bin/bash"]

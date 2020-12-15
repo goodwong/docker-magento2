@@ -49,9 +49,9 @@ RUN apt-get update \
     && usermod -a -G www-data $USERNAME \
     #
     # [Optional] Add sudo support for the non-root user
-    # && apt-get install -y sudo \
-    # && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME\
-    # && chmod 0440 /etc/sudoers.d/$USERNAME \
+    && apt-get install -y sudo \
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME\
+    && chmod 0440 /etc/sudoers.d/$USERNAME \
     #
     # Clean up
     && apt-get autoremove -y \
@@ -74,4 +74,4 @@ RUN service ssh start
 EXPOSE 22
 
 ENTRYPOINT []
-CMD ["/bin/bash"]
+CMD sudo /usr/sbin/sshd -D && /bin/bash

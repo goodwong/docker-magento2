@@ -38,6 +38,9 @@ docker for magento 2.x
         cd magento-domain-2/
         git clone https://github.com/goodwong/docker-magento2.x .docker-compose
         ```
+    
+    4.（可选）初始化数据库文件（可选，也可以在后面步骤手工导入）
+        将 数据库备份文件 .sh, .sql 或 .sql.gz 文件放到 .docker-compose/db/initdb.d/目录下
 
 3. 配置
     1. `docker-magento`
@@ -104,7 +107,7 @@ docker for magento 2.x
         # 需要输入 key 和密码 
         ```
 
-5. 导入数据（可选）
+5. （可选）导入数据
     1. 复制数据库到 mysql57/ 文件夹
     2. 导入数据库
         ```sh
@@ -172,7 +175,7 @@ docker for magento 2.x
     docker-compose exec -u root php-fpm bash
     find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
     find var generated vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} +
-    chown -R :www-data .
+    chown -R 1000:www-data .
     chmod u+x bin/magento
 
     # 更多参考：

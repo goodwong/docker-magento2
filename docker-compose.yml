@@ -19,8 +19,6 @@ services:
       #- redis
     volumes:
       - ${APPLICATION}:/var/www/html:cached
-    environment:
-      - CHANGE_SOURCE=${CHANGE_SOURCE}
 
   # cron
   cron:
@@ -35,13 +33,14 @@ services:
   # php-composer，安装组键、发布到服务器等操作
   workspace:
     build: ./workspace
+    user: vscode
     depends_on:
       - php-fpm
     environment:
       - CHANGE_SOURCE=${CHANGE_SOURCE}
     volumes:
       - ${APPLICATION}:/var/www/html:cached
-      - ~/.ssh/:/root/.ssh/:cached
+      - ./workspace/.ssh/:/home/vscode/.ssh/:cached
     tty: true
     
 

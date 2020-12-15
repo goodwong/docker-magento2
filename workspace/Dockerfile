@@ -1,5 +1,16 @@
 FROM docker-magento2-php-fpm
 
+# This Dockerfile adds a non-root 'vscode' user with sudo access. However, for Linux,
+# this user's GID/UID must match your local user UID/GID to avoid permission issues
+# with bind mounts. Update USER_UID / USER_GID if yours is not 1000. See
+# https://aka.ms/vscode-remote/containers/non-root-user for details.
+ARG USERNAME=vscode
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+# Avoid warnings by switching to noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
+
 # copied from official composer Dockerfile
 # magento 要求 composer 1.x
 RUN curl -s -f -L -o /tmp/installer.php https://getcomposer.org/installer \
@@ -15,20 +26,52 @@ RUN curl -s -f -L -o /tmp/installer.php https://getcomposer.org/installer \
 # for composer install
 RUN docker-php-ext-install sockets
 
-# 安装 git开发工具
-RUN apt-get update && apt-get install -y git
-
 # php 内存
 RUN cp $PHP_INI_DIR/php.ini-development $PHP_INI_DIR/php.ini \
     && echo "memory_limit = 4096M" >> $PHP_INI_DIR/conf.d/memory_limit.ini
 
-# www-data的home目录权限有问题，所以需要自行创建并添加权限
-RUN mkdir -p /var/www/.composer/ \
-    && chown -R www-data:www-data /var/www/
-USER www-data
+RUN apt-get update \
+    #
+    # 安装 git开发工具
+    && apt-get install -y git \
+    #
+    # ssh server
+    && apt-get install -y openssh-server \
+    #
+    # Create a non-root user to use if preferred - see https://aka.ms/vscode-remote/containers/non-root-user.
+    && groupadd --gid $USER_GID $USERNAME \
+    && useradd -s /bin/bash --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    #
+    # Put the Magento file system owner in the web server’s group
+    # The -a -G options are important because they add apache or www-data as a secondary group to the user account,
+    # which preserves the user’s primary group. Adding a secondary group to a user account helps restrict file
+    # ownership and permissions to ensure members of a shared group only have access to certain files.
+    && usermod -a -G www-data $USERNAME \
+    #
+    # [Optional] Add sudo support for the non-root user
+    # && apt-get install -y sudo \
+    # && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME\
+    # && chmod 0440 /etc/sudoers.d/$USERNAME \
+    #
+    # Clean up
+    && apt-get autoremove -y \
+    && apt-get clean -y \
+    && rm -rf /var/lib/apt/lists/*
+
+# Switch back to dialog for any ad-hoc use of apt-get
+ENV DEBIAN_FRONTEND=
+
+# 设置权限
+RUN mkdir -p /home/$USERNAME \
+    && chown -R $USERNAME /home/$USERNAME
 
 # 将magento加入命令列表
 ENV PATH=$PATH:/var/www/html/bin
 
+# 启动 ssh 
+RUN service ssh start
+
+EXPOSE 22
+
 ENTRYPOINT []
-CMD ["/bin/bash"]
+CMD ["/usr/sbin/sshd","-D"]

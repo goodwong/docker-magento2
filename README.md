@@ -170,11 +170,13 @@ docker for magento 2.x
     ```sh
     # 登陆php-fpm容器
     docker-compose exec -u root php-fpm bash
-    #find var vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
-    #find var vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} +
-    chown -R www-data:www-data .
+    find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
+    find var generated vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} +
+    chown -R :www-data .
     chmod u+x bin/magento
-    exit
+
+    # 更多参考：
+    # https://devdocs.magento.com/guides/v2.4/install-gde/prereq/file-system-perms.html#perms-private
     ```
 
 * 使用 magento命令行

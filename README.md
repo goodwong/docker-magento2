@@ -53,7 +53,7 @@ docker for magento 2.x
         - `NGINX_HOST_HTTP_PORT`=  
         - `DB_ADMINER_PORT`=  
 
-        > 生产环境下，建议修改数据库密码  
+        > 生产环境下， ***务必修改*** 数据库密码  
         > - `DB_ROOT_PASSWORD`=  
         > - `DB_PASSWORD`=  
         > - `DB_USER`=  
@@ -79,32 +79,45 @@ docker for magento 2.x
         ```sh
         cd .docker-compose/
         # ！！提示
-        # 请确保 magento2/目录下 有nginx.conf.sample文件，否则 nginx 起不来
+        # 请确保 magento2/目录下 有nginx.conf.sample文件，否则 容器内的 nginx 起不来
         docker-compose up -d web workspace
 
         # 查看日志
         docker-compose logs -f
         ```
+
     2. 验证并重启 nginx
         ```
         nginx -t
         service nginx reload
         ```
+
     3. 更新 letsencrypt
         ```
         sudo certbot --nginx
         ```
+
     4. 文件权限设置
         ```sh
-        cd magento2/
-        chown -R www-data:www-data .
+        cd magento2/ # 宿主机
+        find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
+        find var generated vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} +
+        chown -R 1000:www-data . # vscode 用户 uid=1000
         chmod u+x bin/magento
         ```
+        > 更多参考：
+        > https://devdocs.magento.com/guides/v2.4/install-gde/prereq/file-system-perms.html#perms-private
+
     5. 安装包依赖
         ```sh
         docker-compose exec workspace bash
+
+        # 预设 magento api token
+        echo "{"http-basic": {"repo.magento.com":{"username":"____","password":"____"}}}" > ~/.composer/auth.json
+        # 或者安装过程中会要求输入 key 和密码 
+
+        # 开始安装
         composer install
-        # 需要输入 key 和密码 
         ```
 
 5. （可选）导入数据
@@ -126,10 +139,9 @@ docker for magento 2.x
         ```sh
         docker-compose exec workspace bash
 
-        php bin/magento setup:store-config:set --base-url-secure="https://dev-xxx.app.com"
-
-        php bin/magento setup:store-config:set --base-url="https://dev-xxx.app.com" # 这条也要改，不然后台无法访问报404
-
+        BASE_URL=https://dev-xxx.app.com
+        php bin/magento setup:store-config:set --base-url-secure="${BASE_URL}"
+        php bin/magento setup:store-config:set --base-url="${BASE_URL}" # 这条也要，不然后台无法访问报404
         php bin/magento cache:flush
         ```
 
@@ -169,19 +181,6 @@ docker for magento 2.x
     ```
 
 
-* 设置文件权限
-    ```sh
-    # 登陆php-fpm容器
-    docker-compose exec -u root php-fpm bash
-    find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
-    find var generated vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} +
-    chown -R 1000:www-data .
-    chmod u+x bin/magento
-
-    # 更多参考：
-    # https://devdocs.magento.com/guides/v2.4/install-gde/prereq/file-system-perms.html#perms-private
-    ```
-
 * 使用 magento命令行
     ```sh
     # 登陆workspace容器
@@ -208,7 +207,7 @@ docker for magento 2.x
 * 导入/管理数据库
     > 有两种方式管理数据库：
 
-    - 方法一，通过`adminer`的web界面操作
+    - 方法一，通过`adminer`的web界面操作
         ```sh
         cd .docker-compose/
         docker-compose up adminer

@@ -113,7 +113,7 @@ docker for magento 2.x
         docker-compose exec workspace bash
 
         # 预设 magento api token
-        echo "{"http-basic": {"repo.magento.com":{"username":"____","password":"____"}}}" > ~/.composer/auth.json
+        mkdir ~/.composer; echo '{"http-basic": {"repo.magento.com":{"username":"____","password":"____"}}}' > ~/.composer/auth.json
         # 或者安装过程中会要求输入 key 和密码 
 
         # 开始安装

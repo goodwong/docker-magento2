@@ -41,7 +41,6 @@ services:
       - CHANGE_SOURCE=${CHANGE_SOURCE}
     volumes:
       - ${APPLICATION}:/var/www/html:cached
-      - ./workspace/.ssh/:/home/vscode/.ssh/:cached
     ports:
       - ${WORKSPACE_SSH_PORT}:22
     tty: true

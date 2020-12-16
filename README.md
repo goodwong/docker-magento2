@@ -156,22 +156,16 @@ docker for magento 2.x
     magento-domain-2/
     ├── .docker-compose/ # <---- docker-compose 配置及数据文件夹
     │   ├── .env
-    │   ├── README.md
     │   ├── adminer/
     │   ├── cron/
     │   ├── docker-compose.yml
     |   ....
-    │   ├── nginx/
-    │   ├── php-fpm/
-    │   └── workspace/
-    ├── mysql57/ # <------------- mysql 数据库文件
+    |
+    ├── mysql57/ # <------------ mysql 数据库文件
+    │   ├── auto.cnf
     |   ....
+    |
     └── magento2/ # <----------- magento 2.x 代码文件夹
-        ├── CHANGELOG.md
-        ├── COPYING.txt
-        ├── Gruntfile.js.sample
-        ├── LICENSE.txt
-        ├── LICENSE_AFL.txt
         ├── app/
         ├── auth.json.sample
         ├── bin/

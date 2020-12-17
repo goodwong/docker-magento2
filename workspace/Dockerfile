@@ -29,7 +29,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
     #
     # 安装 git开发工具
-    && apt-get install -y git \
+    && apt-get install -y git tree \
     #
     # ssh server
     && apt-get install -y openssh-server \
@@ -66,10 +66,25 @@ ENV DEBIAN_FRONTEND=
 
 # 将magento加入命令列表
 ENV PATH=$PATH:/var/www/html/bin
-
+ENV SHELL /bin/bash
 
 # 启动 ssh 
 RUN service ssh start
+
+# code server
+RUN curl -fsSL https://code-server.dev/install.sh | sh
+
 EXPOSE 22
+EXPOSE 8080
+
 ENTRYPOINT []
-CMD sudo /usr/sbin/sshd -D && /bin/bash
+CMD (sudo /usr/sbin/sshd -D > /dev/null 2>&1 &); \
+    ( /bin/bash code-server \
+        --install-extension=bmewburn.vscode-intelephense-client \
+        --install-extension=mhutchie.git-graph \
+      && /bin/bash code-server \
+        --bind-addr=0.0.0.0:8080 \
+        /var/www/html/ \
+    > /dev/null 2>&1 &); \
+    sleep 2; cat /home/vscode/.config/code-server/config.yaml; \
+    sleep infinity

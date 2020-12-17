@@ -44,8 +44,10 @@ services:
       - php-fpm
     volumes:
       - ${APPLICATION}:/var/www/html:cached
+      - workspace-home:/home/vscode
     ports:
       - ${WORKSPACE_SSH_PORT}:22
+      - 127.0.0.1:${WORKSPACE_CODER_PORT}:8080
     tty: true
     
 
@@ -77,3 +79,6 @@ services:
       - MYSQL_PASSWORD=${DB_PASSWORD}
       - MYSQL_USER=${DB_USER}
       - MYSQL_DATABASE=${DB_NAME}
+
+volumes:
+  workspace-home:

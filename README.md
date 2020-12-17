@@ -6,6 +6,13 @@ docker for magento 2.x
 > 寻找 Magento 1.x 的docker环境？[点这里](https://github.com/goodwong/docker-magento "For Magento 1.x")   
 
 
+功能
+-----------------------
+1. 支持 https
+2. 支持 一台服务器上多人开发环境分离
+3. 支持 ssh / sftp 方式开发
+4. 支持 code-server 浏览器方式开发
+
 
 安装步骤
 -----------------------
@@ -52,6 +59,8 @@ docker for magento 2.x
         - `COMPOSE_PROJECT_NAME`=  
         - `NGINX_HOST_HTTP_PORT`=  
         - `DB_ADMINER_PORT`=  
+        - `WORKSPACE_SSH_PORT`=
+        - `WORKSPACE_CODER_PORT`=
 
         > 生产环境下， ***务必修改*** 数据库密码  
         > - `DB_ROOT_PASSWORD`=  
@@ -229,7 +238,7 @@ docker for magento 2.x
     ```
 
 
-* 多站点多项目
+* nginx 站点配置
     > 注意分别修改`.env文件`里端口变量为不同的值  
 
     建议使用`nginx`作前端机，配置代理规则
@@ -238,10 +247,18 @@ docker for magento 2.x
     # ／etc/nginx/sites-available/domain-1.conf
 
     server {
-        listen 80;
-        listen [::]:80;
 
-        server_name xxx.com www.xxx.com;
+        server_name dev-xxx.xxx.com;
+
+        location /code-server/ {
+            proxy_set_header HOST $host;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection upgrade;
+            proxy_set_header Accept-Encoding gzip;
+
+            proxy_pass http://127.0.0.1:8003/; # <--- 末尾必须有/符号
+                                               # <--- 端口号见<WORKSPACE_CODER_PORT> 变量
+        }
 
         location / {
             proxy_set_header HOST $host;
@@ -249,8 +266,34 @@ docker for magento 2.x
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
-            proxy_pass http://127.0.0.1:8888/; # <--- 末尾必须有/符号
+            proxy_pass http://127.0.0.1:7700/; # <--- 末尾必须有/符号
                                                # <--- 端口号见<NGINX_HOST_HTTP_PORT> 变量
         }
+
+        # listen [::]:443 ssl ipv6only=on; # managed by Certbot
+        listen 443 ssl; # managed by Certbot
+        ssl_certificate /etc/letsencrypt/live/dev-xxx.xxx.com/fullchain.pem; # managed by Certbot
+        ssl_certificate_key /etc/letsencrypt/live/dev-xxx.xxx.com/privkey.pem; # managed by Certbot
+        include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+        ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+
+
     }
+
+    server {
+        if ($host = dev-xxx.xxx.com) {
+            return 301 https://$host$request_uri;
+        } # managed by Certbot
+
+
+        listen 80;
+        listen [::]:80;
+
+        server_name dev-xxx.xxx.com;
+        return 404; # managed by Certbot
+
+
+    }
+
     ```

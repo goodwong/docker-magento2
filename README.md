@@ -103,7 +103,7 @@ docker for magento 2.x
 
     3. 更新 letsencrypt
         ```
-        sudo certbot --nginx
+        sudo certbot --nginx -d dev-xxx.xxx.com
         ```
 
     4. 文件权限设置
@@ -123,7 +123,7 @@ docker for magento 2.x
 
         # 预设 magento api token
         mkdir ~/.composer; echo '{"http-basic": {"repo.magento.com":{"username":"____","password":"____"}}}' > ~/.composer/auth.json
-        # 或者安装过程中会要求输入 key 和密码 
+        # 或者安装过程中会要求输入 key 和密码
 
         # 开始安装
         composer install

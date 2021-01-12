@@ -84,7 +84,6 @@ CMD (sudo /usr/sbin/sshd -D > /dev/null 2>&1 &); \
         --install-extension=mhutchie.git-graph \
       && /bin/bash code-server \
         --bind-addr=0.0.0.0:8080 \
-        /var/www/html/ \
-    > /dev/null 2>&1 &); \
-    sleep 2; cat /home/vscode/.config/code-server/config.yaml; \
+        /var/www/html/ &); \
+    sleep 10; cat /home/vscode/.config/code-server/config.yaml; \
     sleep infinity

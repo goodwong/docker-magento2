@@ -28,7 +28,8 @@ docker for magento 2.x
         > 目录结构见附录  
         ```sh
         # 项目文件夹
-        mkdir magento-domain-2/ && cd magento-domain-2/
+        mkdir -p magento-domain-2/ && cd $_
+        # mkdir mysql57 magento2
         mkdir magento2/ # <------ 此magento2文件夹名对应.env文件的`APPLICATION`值
         mkdir mysql57/ # <------ 此magento2文件夹名对应.env文件的`DB_DIR`值
         ```
@@ -111,11 +112,16 @@ docker for magento 2.x
         cd magento2/ # 宿主机
         find var generated vendor pub/static pub/media app/etc -type f -exec chmod g+w {} +
         find var generated vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} +
-        chown -R 1000:www-data . # vscode 用户 uid=1000
+        chown -R :www-data .
         chmod u+x bin/magento
         ```
-        > 更多参考：
-        > https://devdocs.magento.com/guides/v2.4/install-gde/prereq/file-system-perms.html#perms-private
+        > 更多参考：  
+        > https://devdocs.magento.com/guides/v2.4/install-gde/prereq/file-system-perms.html#perms-private  
+
+        > 提示2：  
+        > 代码文件的 ownner 应该是 vscode，group 是 www-data  
+        > 但是 var/cache | var/session 需要保持 ownner 为 www-data，否则会报错  
+        所以，首次 git clone 后，可以 `chown -R vscode:www-data`，中途尽量是改哪个文件就设置那个文件的权限。
 
     5. 安装包依赖
         ```sh

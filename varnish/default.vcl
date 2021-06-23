@@ -20,6 +20,8 @@ backend default {
 
 acl purge {
     "localhost";
+    "workspace";
+    "php-fpm";
 }
 
 sub vcl_recv {

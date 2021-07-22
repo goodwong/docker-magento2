@@ -25,7 +25,7 @@ RUN apt-get update && apt-get install -y \
 # others
 RUN apt-get update && apt-get install -y \
         libxml2-dev libzip-dev zip libxslt-dev \
-    && docker-php-ext-install soap pdo_mysql zip xsl intl bcmath opcache
+    && docker-php-ext-install soap pdo_mysql zip xsl intl bcmath opcache sockets
 
 # sodium
 RUN curl -O -C - https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.tar.gz \

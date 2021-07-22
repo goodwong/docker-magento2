@@ -267,6 +267,11 @@ docker for magento 2.x
         }
 
         location / {
+            # 解决 upstream sent too big header while reading response header from upstream 的问题
+            proxy_buffer_size       128k;
+            proxy_buffers           32 32k;
+            proxy_busy_buffers_size 128k;
+
             proxy_set_header HOST $host;
             proxy_set_header X-Forwarded-Proto $scheme;
             proxy_set_header X-Real-IP $remote_addr;
@@ -276,30 +281,26 @@ docker for magento 2.x
                                                # <--- 端口号见<NGINX_HOST_HTTP_PORT> 变量
         }
 
-        # listen [::]:443 ssl ipv6only=on; # managed by Certbot
-        listen 443 ssl; # managed by Certbot
-        ssl_certificate /etc/letsencrypt/live/dev-xxx.xxx.com/fullchain.pem; # managed by Certbot
-        ssl_certificate_key /etc/letsencrypt/live/dev-xxx.xxx.com/privkey.pem; # managed by Certbot
-        include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-        ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+        # 以下certbot会帮你生成
+        #listen [::]:443 ssl ipv6only=on; # managed by Certbot
+        #listen 443 ssl; # managed by Certbot
+        #ssl_certificate /etc/letsencrypt/live/dev-xxx.xxx.com/fullchain.pem; # managed by Certbot
+        #ssl_certificate_key /etc/letsencrypt/live/dev-xxx.xxx.com/privkey.pem; # managed by Certbot
+        #include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+        #ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 
 
 
     }
 
-    server {
-        if ($host = dev-xxx.xxx.com) {
-            return 301 https://$host$request_uri;
-        } # managed by Certbot
-
-
-        listen 80;
-        listen [::]:80;
-
-        server_name dev-xxx.xxx.com;
-        return 404; # managed by Certbot
-
-
-    }
-
+    # 以下certbot会帮你生成
+    #server {
+    #    if ($host = dev-xxx.xxx.com) {
+    #        return 301 https://$host$request_uri;
+    #    } # managed by Certbot
+    #    listen 80;
+    #    listen [::]:80;
+    #    server_name dev-xxx.xxx.com;
+    #    return 404; # managed by Certbot
+    #}
     ```

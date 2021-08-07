@@ -233,6 +233,12 @@ docker for magento 2.x
         #           ^                ^
         #        数据库名         数据库备份文件
         #       见.env文件
+
+        # 方式2：创建新容器，可以自由挂载当前目录
+        docker-compose run --rm -v `pwd`:/wsp -w /wsp db bash
+        mysql -h db -u app -p # 这里要指定host
+        mysqldump -h db -u root -p app > app.sql # 这里要指定host
+
         ```
 
 * CRON

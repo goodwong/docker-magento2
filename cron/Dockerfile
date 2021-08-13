@@ -1,4 +1,4 @@
-FROM docker-magento2-php-fpm
+FROM docker-magento2-php74-fpm
 
 RUN apt-get update && apt-get install -y cron sudo
 

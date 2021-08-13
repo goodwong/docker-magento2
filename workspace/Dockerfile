@@ -1,4 +1,4 @@
-FROM docker-magento2-php-fpm
+FROM docker-magento2-php74-fpm
 
 # This Dockerfile adds a non-root 'vscode' user with sudo access. However, for Linux,
 # this user's GID/UID must match your local user UID/GID to avoid permission issues

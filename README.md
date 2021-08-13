@@ -29,9 +29,9 @@ docker for magento 2.x
         ```sh
         # 项目文件夹
         mkdir -p magento-domain-2/ && cd $_
-        # mkdir mysql57 magento2
+        # mkdir mariadb104 magento2
         mkdir magento2/ # <------ 此magento2文件夹名对应.env文件的`APPLICATION`值
-        mkdir mysql57/ # <------ 此magento2文件夹名对应.env文件的`DB_DIR`值
+        mkdir mariadb104/ # <------ 此magento2文件夹名对应.env文件的`DB_DIR`值
         ```
 
     2. 准备 magento2 源码  
@@ -136,7 +136,7 @@ docker for magento 2.x
         ```
 
 5. （可选）导入数据
-    1. 复制数据库到 mysql57/ 文件夹
+    1. 复制数据库到 mariadb104/ 文件夹
     2. 导入数据库
         ```sh
         docker-compose exec -w /var/lib/mysql/ db bash 
@@ -176,7 +176,7 @@ docker for magento 2.x
     │   ├── docker-compose.yml
     |   ....
     |
-    ├── mysql57/ # <------------ mysql 数据库文件
+    ├── mariadb104/ # <------------ mariadb 数据库文件
     │   ├── auto.cnf
     |   ....
     |
@@ -224,8 +224,8 @@ docker for magento 2.x
         打开浏览器 `http://IP地址:<DB_ADMINER_PORT>?server=db`
 
 
-    - 方法二，进入mysql容器，使用命令行界面  
-        首先将数据文件解压并放在` 数据库文件夹`下（如:magento-domain-2/mysql57/）
+    - 方法二，进入mariadb容器，使用命令行界面  
+        首先将数据文件解压并放在` 数据库文件夹`下（如:magento-domain-2/mariadb104/）
         ```sh
         # 登陆db容器
         docker-compose exec -w /var/lib/mysql/ db bash 

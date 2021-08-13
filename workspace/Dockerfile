@@ -9,9 +9,8 @@ ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
 # copied from official composer Dockerfile
-# magento 要求 composer 1.x
 RUN curl -s -f -L -o /tmp/installer.php https://getcomposer.org/installer \
-    && php /tmp/installer.php --no-ansi --install-dir=/usr/bin --filename=composer --version=1.10.6 \
+    && php /tmp/installer.php --no-ansi --install-dir=/usr/bin --filename=composer --version=2.1.5 \
     && composer --ansi --version --no-interaction \
     && rm -rf /tmp/* /tmp/.htaccess \
     #

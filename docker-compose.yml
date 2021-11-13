@@ -63,10 +63,11 @@ services:
       - "${NGINX_HOST_HTTP_PORT}:80"
 
   # redis
-  #redis:
-  #  #build: ./redis
-  #  image: redis:4
-  #  restart: ${CONTAINER_RESTART}
+  redis:
+    #build: ./redis
+    image: redis:5
+    restart: ${CONTAINER_RESTART}
+
   varnish:
     image: varnish:6.6
     depends_on:

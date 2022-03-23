@@ -10,10 +10,8 @@ ARG USER_GID=$USER_UID
 
 # copied from official composer Dockerfile
 # magento 要求 composer 1.x
-RUN curl -s -f -L -o /tmp/installer.php https://getcomposer.org/installer \
-    && php /tmp/installer.php --no-ansi --install-dir=/usr/bin --filename=composer --version=1.10.6 \
-    && composer --ansi --version --no-interaction \
-    && rm -rf /tmp/* /tmp/.htaccess \
+RUN curl -ksfL -o /usr/bin/composer https://getcomposer.org/download/1.10.6/composer.phar \
+    && chmod +x /usr/bin/composer \
     #
     # install sockets
     # for composer install
@@ -72,7 +70,7 @@ ENV SHELL /bin/bash
 RUN service ssh start
 
 # code server
-RUN curl -fsSL https://code-server.dev/install.sh | sh
+RUN curl -kfsSL https://code-server.dev/install.sh | sh
 
 EXPOSE 22
 EXPOSE 8080

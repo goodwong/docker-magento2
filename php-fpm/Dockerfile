@@ -28,7 +28,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install soap pdo_mysql zip xsl intl bcmath opcache sockets
 
 # sodium
-RUN curl -O -C - https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.tar.gz \
+RUN curl -k -O -C - https://download.libsodium.org/libsodium/releases/libsodium-1.0.18.tar.gz \
     && tar zxf libsodium-1.0.18.tar.gz \
     && cd libsodium-1.0.18 \
     && ./configure \

@@ -18,7 +18,7 @@ services:
   # php-fpm
   php-fpm:
     build: ./php-fpm
-    image: docker-magento2-php74-fpm
+    image: docker-magento2-php81-fpm
     depends_on:
       - db
       #- redis
@@ -65,11 +65,11 @@ services:
   # redis
   redis:
     #build: ./redis
-    image: redis:5
+    image: redis:6.2
     restart: ${CONTAINER_RESTART}
 
   varnish:
-    image: varnish:6.6
+    image: varnish:7.0
     depends_on:
       - web
     volumes:
@@ -94,7 +94,7 @@ services:
       - MYSQL_DATABASE=${DB_NAME}
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.1
+    image: elasticsearch:7.16.3
     restart: ${CONTAINER_RESTART}
     environment:
       - discovery.type=single-node

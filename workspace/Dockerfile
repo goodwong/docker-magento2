@@ -1,4 +1,4 @@
-FROM docker-magento2-php74-fpm
+FROM docker-magento2-php81-fpm
 
 # This Dockerfile adds a non-root 'vscode' user with sudo access. However, for Linux,
 # this user's GID/UID must match your local user UID/GID to avoid permission issues
@@ -11,7 +11,7 @@ ARG USER_GID=$USER_UID
 # copied from official composer Dockerfile
 # magento 要求 composer 1.x
 RUN curl -s -f -L -o /tmp/installer.php https://getcomposer.org/installer \
-    && php /tmp/installer.php --no-ansi --install-dir=/usr/bin --filename=composer --version=1.10.6 \
+    && php /tmp/installer.php --no-ansi --install-dir=/usr/bin --filename=composer --version=2.1.14 \
     && composer --ansi --version --no-interaction \
     && rm -rf /tmp/* /tmp/.htaccess \
     #

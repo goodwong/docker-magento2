@@ -1,4 +1,4 @@
-FROM php:7.4-fpm
+FROM php:8.1-fpm
 
 # If you're in China, or you need to change sources, will be set CHANGE_SOURCE to true in .env.
 # @TODO 这一块还是有问题。。。

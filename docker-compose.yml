@@ -107,6 +107,14 @@ services:
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
 
+  kibana:
+    image: kibana:7.16.3
+    ports:
+      - "${KIBANA_PORT}:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+
+
 volumes:
   workspace-home:
   elasticsearch-data:

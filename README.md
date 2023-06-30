@@ -30,8 +30,8 @@ docker for magento 2.x
         # 项目文件夹
         mkdir -p magento-domain-2/ && cd $_
         # mkdir mysql57 magento2
-        mkdir magento2/ # <------ 此magento2文件夹名对应.env文件的`APPLICATION`值
-        mkdir mysql57/ # <------ 此magento2文件夹名对应.env文件的`DB_DIR`值
+        # mkdir magento2/ # <------ 此magento2文件夹名对应.env文件的`APPLICATION`值
+        # mkdir mysql57/ # <------ 此magento2文件夹名对应.env文件的`DB_DIR`值
         ```
 
     2. 准备 magento2 源码  
@@ -44,16 +44,16 @@ docker for magento 2.x
     3. 克隆 docker-magento2.x
         ```sh
         cd magento-domain-2/
-        git clone https://github.com/goodwong/docker-magento2.x .docker-compose
+        git clone https://github.com/goodwong/docker-magento2.x .docker/
         ```
     
     4.（可选）初始化数据库文件（可选，也可以在后面步骤手工导入）
-        将 数据库备份文件 .sh, .sql 或 .sql.gz 文件放到 .docker-compose/db/initdb.d/目录下
+        将 数据库备份文件 .sh, .sql 或 .sql.gz 文件放到 .docker/db/initdb.d/目录下
 
 3. 配置
     1. `docker-magento`
         ```sh
-        cd .docker-compose/
+        cd .docker/
         cp .env.example .env
         ```
         默认配置即可运行，如果有多个magento站点运行，分别修改以下变量为不同的值：
@@ -69,7 +69,7 @@ docker for magento 2.x
         > - `DB_USER`=  
         > - `DB_NAME`=  
 
-    2. 创建/修改 magento2/app/etc/.env.php，修改 db 连接参数
+    2. 创建/修改 magento2/app/etc/env.php，修改 db 连接参数
         ```php
         <?php
         return [
@@ -87,7 +87,7 @@ docker for magento 2.x
 4. 启动
     1. 启动服务
         ```sh
-        cd .docker-compose/
+        cd .docker/
         # ！！提示
         # 请确保 magento2/目录下 有nginx.conf.sample文件，否则 容器内的 nginx 起不来
         docker-compose up -d web workspace
@@ -169,7 +169,7 @@ docker for magento 2.x
 
     ```sh
     magento-domain-2/
-    ├── .docker-compose/ # <---- docker-compose 配置及数据文件夹
+    ├── .docker/ # <---- docker-compose 配置及数据文件夹
     │   ├── .env
     │   ├── adminer/
     │   ├── cron/
@@ -218,7 +218,7 @@ docker for magento 2.x
 
     - 方法一，通过`adminer`的web界面操作
         ```sh
-        cd .docker-compose/
+        cd .docker/
         docker-compose up adminer
         ```
         打开浏览器 `http://IP地址:<DB_ADMINER_PORT>?server=db`
@@ -245,7 +245,7 @@ docker for magento 2.x
     > 请确保Magento正确安装后，再启用本服务
 
     ```sh
-    cd .docker-compose/
+    cd .docker/
     docker-compose up -d cron
     ```
 
@@ -287,26 +287,6 @@ docker for magento 2.x
                                                # <--- 端口号见<NGINX_HOST_HTTP_PORT> 变量
         }
 
-        # 以下certbot会帮你生成
-        #listen [::]:443 ssl ipv6only=on; # managed by Certbot
-        #listen 443 ssl; # managed by Certbot
-        #ssl_certificate /etc/letsencrypt/live/dev-xxx.xxx.com/fullchain.pem; # managed by Certbot
-        #ssl_certificate_key /etc/letsencrypt/live/dev-xxx.xxx.com/privkey.pem; # managed by Certbot
-        #include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-        #ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-
-
-
     }
 
-    # 以下certbot会帮你生成
-    #server {
-    #    if ($host = dev-xxx.xxx.com) {
-    #        return 301 https://$host$request_uri;
-    #    } # managed by Certbot
-    #    listen 80;
-    #    listen [::]:80;
-    #    server_name dev-xxx.xxx.com;
-    #    return 404; # managed by Certbot
-    #}
     ```

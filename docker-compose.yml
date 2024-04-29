@@ -46,7 +46,7 @@ services:
     depends_on:
       - php-fpm
     volumes:
-      - workspace-home:/home/vscode
+      - workspace-home:/var/www
       - ./:/var/www/.docker/
       - ${APPLICATION}:/var/www/html:cached
     ports:

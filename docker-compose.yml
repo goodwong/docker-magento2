@@ -29,7 +29,7 @@ services:
   # cron
   cron:
     build: ./cron
-    image: docker-magento2-cron
+    image: docker-magento2-244-cron
     depends_on:
       - php-fpm
     restart: ${CONTAINER_RESTART}
@@ -40,7 +40,7 @@ services:
   # php-composer，安装组键、发布到服务器等操作
   workspace:
     build: ./workspace
-    image: docker-magento2-workspace
+    image: docker-magento2-244-workspace
     user: www-data
     working_dir: /var/www/html
     depends_on:
@@ -68,7 +68,6 @@ services:
 
   # redis
   redis:
-    #build: ./redis
     image: redis:6.2
     restart: ${CONTAINER_RESTART}
     volumes:

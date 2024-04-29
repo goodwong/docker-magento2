@@ -1,0 +1,12 @@
+{
+    "git.autofetch": true,
+    "files.watcherExclude": {
+        "**/dev/*/**": true,
+        "**/generated/*/**": true,
+        "**/lib/*/**": true,
+        "**/setup/*/**": true,
+        "**/pub/media/*/**": true,
+        "**/var/*/**": true,
+        "**/vendor/*/**": true
+    }
+}

@@ -90,7 +90,15 @@ docker for magento 2.x
         cd .docker/
         # ！！提示
         # 请确保 magento2/目录下 有nginx.conf.sample文件，否则 容器内的 nginx 起不来
-        docker-compose up -d web workspace
+
+        # 编译
+        docker compose build \
+            --build-arg='http_proxy=socks5h://192.168.11.102:10019' \
+            --build-arg='https_proxy=socks5h://192.168.11.102:10019' \
+            workspace
+
+        # 启动
+        docker-compose up -d nginx workspace
 
         # 查看日志
         docker-compose logs -f

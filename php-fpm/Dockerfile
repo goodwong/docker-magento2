@@ -1,18 +1,5 @@
 FROM php:7.3-fpm-stretch
 
-# If you're in China, or you need to change sources, will be set CHANGE_SOURCE to true in .env.
-# @TODO 这一块还是有问题。。。
-#COPY sources.list.cn /etc/apt/
-#ENV CHANGE_SOURCE=CN
-#RUN if [ ${CHANGE_SOURCE} = CN ]; then \
-#        # Change application source from dl-cdn.alpinelinux.org to aliyun source
-#        echo "change to Chinese apt source"; \
-#        # 备份原文件
-#        mv /etc/apt/sources.list /etc/apt/sources.list.origin; \
-#        # 修改为阿里云的镜像源
-#        cp /etc/apt/sources.list.cn /etc/apt/sources.list \
-#    ;fi
-
 # GD
 RUN apt-get update && apt-get install -y \
         libfreetype6-dev \

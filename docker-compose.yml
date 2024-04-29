@@ -1,5 +1,3 @@
-version: '3'
-
 services:
 
   # 数据库管理
@@ -18,16 +16,20 @@ services:
   # php-fpm
   php-fpm:
     build: ./php-fpm
-    image: docker-magento2-php-fpm
+    image: docker-magento2-php73-fpm
     depends_on:
       - db
-      #- redis
+      - redis
+      - elasticsearch
     volumes:
       - ${APPLICATION}:/var/www/html:cached
+      - ./php-fpm/php.ini:/usr/local/etc/php/php.ini
+      - ./php-fpm/www.conf:/usr/local/etc/php-fpm.d/www.conf
 
   # cron
   cron:
     build: ./cron
+    image: docker-magento2-236-cron
     depends_on:
       - php-fpm
     restart: ${CONTAINER_RESTART}
@@ -38,13 +40,15 @@ services:
   # php-composer，安装组键、发布到服务器等操作
   workspace:
     build: ./workspace
-    user: vscode
+    image: docker-magento2-236-workspace
+    user: www-data
     working_dir: /var/www/html
     depends_on:
       - php-fpm
     volumes:
+      - workspace-home:/var/www
+      - ./:/var/www/.docker/
       - ${APPLICATION}:/var/www/html:cached
-      - workspace-home:/home/vscode
     ports:
       - ${WORKSPACE_SSH_PORT}:22
       - ${WORKSPACE_CODER_PORT}:8080
@@ -52,7 +56,7 @@ services:
     
 
   # nginx
-  web:
+  nginx:
     image: nginx
     depends_on:
       - php-fpm
@@ -67,11 +71,16 @@ services:
     #build: ./redis
     image: redis:5
     restart: ${CONTAINER_RESTART}
+    volumes:
+      - ./redis/redis.conf:/data/redis.conf
+    command: redis-server /data/redis.conf
 
   varnish:
     image: varnish:6.6
     depends_on:
-      - web
+      - nginx
+      - cron
+      - workspace
     volumes:
       - ./varnish/default.vcl:/etc/varnish/default.vcl:ro
     tmpfs:

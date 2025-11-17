@@ -2,7 +2,7 @@ services:
 
   # 数据库管理
   adminer:
-    image: adminer:4
+    image: adminer:5
     volumes:
       - ./adminer/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
     ports:
@@ -12,15 +12,14 @@ services:
     depends_on: 
       - db
 
-
   # php-fpm
   php-fpm:
+    image: docker-magento2-php83-fpm
     build: ./php-fpm
-    image: docker-magento2-php81-fpm
     depends_on:
       - db
       - redis
-      - elasticsearch
+      - opensearch
     volumes:
       - ${APPLICATION}:/var/www/html:cached
       - ./php-fpm/php.ini:/usr/local/etc/php/php.ini
@@ -28,8 +27,8 @@ services:
 
   # cron
   cron:
+    image: docker-magento2-php83-cron
     build: ./cron
-    image: docker-magento2-244-cron
     depends_on:
       - php-fpm
     restart: ${CONTAINER_RESTART}
@@ -39,8 +38,8 @@ services:
 
   # php-composer，安装组键、发布到服务器等操作
   workspace:
+    image: docker-magento2-php83-workspace
     build: ./workspace
-    image: docker-magento2-244-workspace
     user: www-data
     working_dir: /var/www/html
     depends_on:
@@ -54,28 +53,28 @@ services:
       - ${WORKSPACE_CODER_PORT}:8080
     tty: true
     
-
   # nginx
   nginx:
-    image: nginx
+    image: nginx:1.28
     depends_on:
       - php-fpm
     volumes:
       - ${APPLICATION}:/var/www/html:cached
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
     ports:
-      - "${NGINX_HOST_HTTP_PORT}:80"
+      - "${NGINX_HTTP_PORT}:80"
 
   # redis
   redis:
-    image: redis:6.2
+    image: redis:7.2
     restart: ${CONTAINER_RESTART}
     volumes:
       - ./redis/redis.conf:/data/redis.conf
     command: redis-server /data/redis.conf
 
+  # Varnish
   varnish:
-    image: varnish:7.0
+    image: varnish:7.7
     depends_on:
       - nginx
       - cron
@@ -83,17 +82,18 @@ services:
     volumes:
       - ./varnish/default.vcl:/etc/varnish/default.vcl:ro
     tmpfs:
-      - /var/lib/varnish:exec
+      - /var/lib/varnish/varnishd:exec
     environment: 
       - VARNISH_SIZE
     ports:
       - "${VARNISH_PORT}:80"
 
+  # DB
   db:
-    image: mariadb:10.4
+    image: mariadb:10.11
     restart: ${CONTAINER_RESTART}
     volumes:
-      - ${DB_DIR}:/var/lib/mysql
+      - db-data:/var/lib/mysql
       - ./db/initdb.d/:/docker-entrypoint-initdb.d
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
@@ -101,29 +101,39 @@ services:
       - MYSQL_USER=${DB_USER}
       - MYSQL_DATABASE=${DB_NAME}
 
-  elasticsearch:
-    image: elasticsearch:7.16.3
+  # Open Search
+  opensearch:
+    image: opensearchproject/opensearch:2.19.4
     restart: ${CONTAINER_RESTART}
     environment:
       - discovery.type=single-node
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=${OPENSEARCH_INITIAL_ADMIN_PASSWORD}
+      - DISABLE_SECURITY_PLUGIN=true
     ulimits:
       memlock:
         soft: -1
         hard: -1
+      nofile:
+        soft: 65536 # Maximum number of open files for the opensearch user - set to at least 65536
+        hard: 65536
     volumes:
-      - elasticsearch-data:/usr/share/elasticsearch/data
+      - opensearch-data:/usr/share/opensearch/data
 
-  kibana:
-    image: kibana:7.16.3
-    ports:
-      - "${KIBANA_PORT}:5601"
+  # Rabbit MQ
+  rabbitmq:
+    image: rabbitmq:4.1-management
+    restart: ${CONTAINER_RESTART}
+    hostname: rabbit-001
     environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+
 
 
 volumes:
   workspace-home:
-  elasticsearch-data:
-    driver: local
+  opensearch-data:
+  db-data:
+

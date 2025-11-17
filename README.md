@@ -28,10 +28,8 @@ docker for magento 2.x
         > 目录结构见附录  
         ```sh
         # 项目文件夹
-        mkdir -p magento-domain-2/ && cd $_
-        # mkdir mariadb104 magento2
+        mkdir -p project-name/ && cd $_
         mkdir magento2/ # <------ 此magento2文件夹名对应.env文件的`APPLICATION`值
-        mkdir mariadb104/ # <------ 此magento2文件夹名对应.env文件的`DB_DIR`值
         ```
 
     2. 准备 magento2 源码  
@@ -43,12 +41,9 @@ docker for magento 2.x
 
     3. 克隆 docker-magento2.x
         ```sh
-        cd magento-domain-2/
-        git clone https://github.com/goodwong/docker-magento2.x .docker/
+        cd project-name/
+        git clone https://github.com/goodwong/docker-magento2.x -b magento247-p8  .docker/
         ```
-    
-    4.（可选）初始化数据库文件（可选，也可以在后面步骤手工导入）
-        将 数据库备份文件 .sh, .sql 或 .sql.gz 文件放到 .docker/db/initdb.d/目录下
 
 3. 配置
     1. `docker-magento`
@@ -58,7 +53,7 @@ docker for magento 2.x
         ```
         默认配置即可运行，如果有多个magento站点运行，分别修改以下变量为不同的值：
         - `COMPOSE_PROJECT_NAME`=  
-        - `NGINX_HOST_HTTP_PORT`=  
+        - `NGINX_HTTP_PORT`=  
         - `DB_ADMINER_PORT`=  
         - `WORKSPACE_SSH_PORT`=
         - `WORKSPACE_CODER_PORT`=
@@ -98,10 +93,10 @@ docker for magento 2.x
             workspace
 
         # 启动
-        docker-compose up -d nginx workspace
+        docker compose up -d nginx workspace
 
         # 查看日志
-        docker-compose logs -f
+        docker compose logs -f
         ```
 
     2. 验证并重启 nginx
@@ -133,7 +128,7 @@ docker for magento 2.x
 
     5. 安装包依赖
         ```sh
-        docker-compose exec workspace bash
+        docker compose exec workspace bash
 
         # 预设 magento api token
         mkdir ~/.composer; echo '{"http-basic": {"repo.magento.com":{"username":"____","password":"____"}}}' > ~/.composer/auth.json
@@ -144,10 +139,10 @@ docker for magento 2.x
         ```
 
 5. （可选）导入数据
-    1. 复制数据库到 mariadb104/ 文件夹
+    1. 复制数据库到 数据库容器卷文件夹
     2. 导入数据库
         ```sh
-        docker-compose exec -w /var/lib/mysql/ db bash 
+        docker compose exec -w /var/lib/mysql/ db bash 
         mysql -p app < database_backup_file.sql
         ```
     3. 重新编译
@@ -160,7 +155,7 @@ docker for magento 2.x
         ```
     4. 修改 base_url
         ```sh
-        docker-compose exec workspace bash
+        docker compose exec workspace bash
 
         BASE_URL=https://dev-xxx.app.com
         php bin/magento setup:store-config:set --base-url-secure="${BASE_URL}"
@@ -176,16 +171,12 @@ docker for magento 2.x
 * 文件夹结构
 
     ```sh
-    magento-domain-2/
+    project-name/
     ├── .docker/ # <---- docker-compose 配置及数据文件夹
     │   ├── .env
     │   ├── adminer/
     │   ├── cron/
     │   ├── docker-compose.yml
-    |   ....
-    |
-    ├── mariadb104/ # <------------ mariadb 数据库文件
-    │   ├── auto.cnf
     |   ....
     |
     └── magento2/ # <----------- magento 2.x 代码文件夹
@@ -201,8 +192,8 @@ docker for magento 2.x
 * 使用 magento命令行
     ```sh
     # 登陆workspace容器
-    docker-compose up -d workspace
-    docker-compose exec workspace bash
+    docker compose up -d workspace
+    docker compose exec workspace bash
 
     # 执行安装
     magento setup:install \
@@ -227,23 +218,23 @@ docker for magento 2.x
     - 方法一，通过`adminer`的web界面操作
         ```sh
         cd .docker/
-        docker-compose up adminer
+        docker compose up adminer
         ```
         打开浏览器 `http://IP地址:<DB_ADMINER_PORT>?server=db`
 
 
     - 方法二，进入mariadb容器，使用命令行界面  
-        首先将数据文件解压并放在` 数据库文件夹`下（如:magento-domain-2/mariadb104/）
+        首先将数据文件解压并放在` 数据库文件夹`下（如:/var/lib/docker/volumes/project-name-prod_db-data/_data/）
         ```sh
         # 登陆db容器
-        docker-compose exec -w /var/lib/mysql/ db bash 
+        docker compose exec -w /var/lib/mysql/ db bash 
         mysql -p db_name < database_backup_file.sql
         #           ^                ^
         #        数据库名         数据库备份文件
         #       见.env文件
 
         # 方式2：创建新容器，可以自由挂载当前目录
-        docker-compose run --rm -v `pwd`:/wsp -w /wsp db bash
+        docker compose run --rm -v `pwd`:/wsp -w /wsp db bash
         mysql -h db -u app -p # 这里要指定host
         mysqldump -h db -u root -p app > app.sql # 这里要指定host
 
@@ -254,7 +245,7 @@ docker for magento 2.x
 
     ```sh
     cd .docker/
-    docker-compose up -d cron
+    docker compose up -d cron
     ```
 
 
@@ -292,7 +283,7 @@ docker for magento 2.x
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
             proxy_pass http://127.0.0.1:7700/; # <--- 末尾必须有/符号
-                                               # <--- 端口号见<NGINX_HOST_HTTP_PORT> 变量
+                                               # <--- 端口号见<NGINX_HTTP_PORT> 变量
         }
 
     }

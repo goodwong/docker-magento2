@@ -42,7 +42,7 @@ docker for magento 2.x
     3. 克隆 docker-magento2.x
         ```sh
         cd project-name/
-        git clone https://github.com/goodwong/docker-magento2.x -b magento247-p8  .docker/
+        git clone https://github.com/goodwong/docker-magento2.x -b magento246-p13  .docker/
         ```
 
 3. 配置

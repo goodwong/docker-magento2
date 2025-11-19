@@ -14,7 +14,7 @@ services:
 
   # php-fpm
   php-fpm:
-    image: docker-magento2-php83-fpm
+    image: docker-magento2-php82-fpm
     build: ./php-fpm
     depends_on:
       - db
@@ -27,7 +27,7 @@ services:
 
   # cron
   cron:
-    image: docker-magento2-php83-cron
+    image: docker-magento2-php82-cron
     build: ./cron
     depends_on:
       - php-fpm
@@ -38,7 +38,7 @@ services:
 
   # php-composer，安装组键、发布到服务器等操作
   workspace:
-    image: docker-magento2-php83-workspace
+    image: docker-magento2-php82-workspace
     build: ./workspace
     user: www-data
     working_dir: /var/www/html
